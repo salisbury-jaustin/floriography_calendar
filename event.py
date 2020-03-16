@@ -1,28 +1,9 @@
 # creates an event in a users google calendar using google calendar api
 # documentation at https://developers.google.com/calendar/quickstart/python
 
-from __future__ import print_function
 import datetime
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-import quickstart
 import re
 import pprint
-
-#while True:
-#    quickstart.main()
-#    break
-#
-## call calendar api
-#now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-#events_result = service.events().list(calendarId='primary', timeMin=now,
-#                                        maxResults=10, singleEvents=True,
-#                                        orderBy='startTime').execute()
-#events = events_result.get('items', [])
-
 
 # query returns user input as eventList
 def query():
@@ -74,15 +55,13 @@ def createEvent():
                 'dateTime': eventList[4],
                 'timeZone': 'America/Chicago',
                 },
-            'recurrence': [],
             'attendees': [
                 {'email': eventList[5]},
-                ],
-            'reminders': {
-                'useDefault': False,
-                'overrides': [],
-                },
+                ]
             }
+    
+    #event = service.events().insert(calendarId='primary', body=event().execute())
+    #print('Event created: %s' % (event.get('htmlLink')))
 
     # use of dateRegex allows for grouping date strings 'yyyy-mm-dd' into year, month, and day groups
     dateRegex = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
@@ -135,26 +114,15 @@ def createEvent():
     for k, v in reminderDate.items():
             event = {
             'summary': v,
-            'location': '',  
-            'description': '',  
             'start': {
-                'dateTime': k,
+                'date': k,
                 'timeZone': 'America/Chicago',
                 },
             'end': {
-                'dateTime': '',  
+                'date': k,  
                 'timeZone': 'America/Chicago',
-                },
-            'recurrence': [],
-            'attendees': [
-                {'email': '' },
-                ],
-            'reminders': {
-                'useDefault': False,
-                'overrides': [],
-                },
+                }
             }      
-            pprint.pprint(event)
             
             #event = service.events().insert(calendarId='primary', body=event().execute())
             #print('Event created: %s' % (event.get('htmlLink')))
