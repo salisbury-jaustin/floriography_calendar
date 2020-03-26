@@ -7,6 +7,7 @@ Abstract
 		* query.py
 		* event.py
 		* main.py
+		* installPackages.py
 
 	*credentials.json stores the credentials for my own instance of google calendar api so that the user can
 		access it and run the program
