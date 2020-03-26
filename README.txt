@@ -28,9 +28,10 @@ Required Packages
 	run the installPackages.py script
 Run
 	In order to execute the program simply run main.py
+	The program will open a web browser and user will have to grant authorization to the program
+	The authorization credentials will be stored in a file called 'token.pickle' and subsequent executions of the 		     program will not require the user to authorize access
 	If you want to observe the functionality and output of query.py and event.py, running them individually
 		will execute their function(s) and print their output to the console 
-	The authorization credentials will be stored in a file called 'token.pickle' and subsequent executions of the 		     program will not require the user to authorize access
 Documentation:
 	Google Calendar API:
 		https://developers.google.com/calendar/quickstart/python

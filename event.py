@@ -102,5 +102,5 @@ def createEvent():
     return eventDictList
 
 # allows event.py to be run for the purposes of debugging
-if _name_ == '_main_':
+if __name__ == '__main__':
     print(createEvent())
