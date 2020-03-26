@@ -1,0 +1,10 @@
+import subprocess
+import sys
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", package])
+
+install('pyinputplus')
+install('google-api-python-client')
+install('google-auth-httplib2')
+install('google-auth-oauthlib')

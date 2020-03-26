@@ -20,9 +20,13 @@ Abstract
 	*event.py retrieves those values to calculate and create all the events to be added to a google calendar
 	*main.py calls the google calendar api, prompts user to authorize read-write access to their google calendar,
 		and then adds the events to the calendar
-
+Required Packages
+	To install required packages run:
+	  $ pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib pyinputplus
+	OR
+	run the installPackages.py script
 Run
-	I order to execute the program simply run main.py
+	In order to execute the program simply run main.py
 	If you want to observe the functionality and output of query.py and event.py, running them individually
 		will execute their function(s) and print their output to the console 
 	The authorization credentials will be stored in a file called 'token.pickle' and subsequent executions of the 		     program will not require the user to authorize access
