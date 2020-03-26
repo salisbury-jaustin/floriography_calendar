@@ -29,7 +29,7 @@ def createEvent():
             }
     eventDictList = []
     eventDictList.append(event)
-    print(eventDictList)
+
     # use of dateRegex allows for grouping date strings 'yyyy-mm-dd' into year, month, and day groups
     dateRegex = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
 

@@ -1,5 +1,5 @@
-import event
 from __future__ import print_function
+import event
 import datetime
 import pickle
 import os.path
@@ -12,7 +12,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 def addEvents(eventDictList):
     for i in eventDictList:
-        event = service.events().insert(calendarId='primary', body=i).execute())
+        event = service.events().insert(calendarId='primary', body=i).execute()
         print('Event created: %s' % (event.get('htmlLink')))
 
 def main():
@@ -43,7 +43,7 @@ def main():
     # Call the Calendar API
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     listOfEvents = event.createEvent()
-    addEvents(ListofEvents)
+    addEvents(ListOfEvents)
 
 if __name__ == '__main__':
     main()
