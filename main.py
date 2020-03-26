@@ -8,9 +8,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-def addEvents(eventDictList):
+def addEvents(eventDictList, service):
+    service = service
     for i in eventDictList:
         event = service.events().insert(calendarId='primary', body=i).execute()
         print('Event created: %s' % (event.get('htmlLink')))
@@ -43,7 +44,7 @@ def main():
     # Call the Calendar API
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     listOfEvents = event.createEvent()
-    addEvents(ListOfEvents)
+    addEvents(listOfEvents, service)
 
 if __name__ == '__main__':
     main()
