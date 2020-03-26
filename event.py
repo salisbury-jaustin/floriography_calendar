@@ -1,48 +1,16 @@
-# creates an event in a users google calendar using google calendar api
 # documentation at https://developers.google.com/calendar/quickstart/python
 
 import datetime
 import re
-import pprint
-
-# query returns user input as eventList
-def query():
-    print('Event:')
-    summary = input()
-    
-    print('location:')
-    location = input()
-
-    print('description:')
-    description = input()
-
-    print('wedding date (yyyy-mm-dd):')
-    weddingDate = input()
-
-    print('start time:')
-    timeStart = 'T' + input() + ':00-06:00'
-
-    dateTimeStart = weddingDate + timeStart
-    
-    print ('end time:')
-    timeEnd = 'T' + input() + ':00-06:00'
-    
-    dateTimeEnd = weddingDate + timeEnd
-
-    print('email of coordinator:')
-    email = input()
-
-    print('book date:')
-    bookDate = input()
-
-    eventList = [summary, location, description, dateTimeStart, dateTimeEnd, email, weddingDate, bookDate]
-    return eventList
+import calendar
+import query
 
 # add event to calendar
 # uses the return value from query() to insert values into event{}
 # documentation at https://developers.google.com/calendar/create-events
+
 def createEvent():
-    eventList = query()
+    eventList = query.query()
     event = {
             'summary': eventList[0],
             'location': eventList[1],
@@ -59,10 +27,9 @@ def createEvent():
                 {'email': eventList[5]},
                 ]
             }
-    
-    #event = service.events().insert(calendarId='primary', body=event().execute())
-    #print('Event created: %s' % (event.get('htmlLink')))
-
+    eventDictList = []
+    eventDictList.append(event)
+    print(eventDictList)
     # use of dateRegex allows for grouping date strings 'yyyy-mm-dd' into year, month, and day groups
     dateRegex = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
 
@@ -123,8 +90,6 @@ def createEvent():
                 'timeZone': 'America/Chicago',
                 }
             }      
-            
-            #event = service.events().insert(calendarId='primary', body=event().execute())
-            #print('Event created: %s' % (event.get('htmlLink')))
-
-createEvent()
+            eventDictList.append(event)
+    
+    return eventDictList
