@@ -1,14 +1,16 @@
-# documentation at https://developers.google.com/calendar/quickstart/python
-
+''' createEvent() will call the function query() from the query module and store query variables inside dictionaries.    these dictionaries have a specific format, i.e., keys and values, as dictated by the google calendar api for
+    adding events to calendars.
+    createEvent() is to be called as a module by the script: main.py
+    event.py can be run by itself for debugging
+'''
 import datetime
 import re
 import calendar
 import query
 
-# add event to calendar
 # uses the return value from query() to insert values into event{}
-# documentation at https://developers.google.com/calendar/create-events
-
+# event dictionaries are then stored in a variable of type list name eventDictList
+# eventDictList is the value that is passed when main() calls createEvent()
 def createEvent():
     eventList = query.query()
     event = {
@@ -27,13 +29,18 @@ def createEvent():
                 {'email': eventList[5]},
                 ]
             }
+
+    # initialize and empty list for storing event dictionaries
     eventDictList = []
+
+    # add event to eventDictList
     eventDictList.append(event)
 
     # use of dateRegex allows for grouping date strings 'yyyy-mm-dd' into year, month, and day groups
     dateRegex = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
 
-    # creates weddingDate and bookDate variables of type <class 'datetime.date'> to allow for date.timedelta() calculations
+    # creates weddingDate and bookDate variables of type <class 'datetime.date'> to allow for date.timedelta()
+    # calculations
     moWeddingDate = dateRegex.search(eventList[6])
     weddingDateIntList = [int(i) for i in moWeddingDate.groups()]
     year, month, day = weddingDateIntList
@@ -93,3 +100,7 @@ def createEvent():
             eventDictList.append(event)
     
     return eventDictList
+
+# allows event.py to be run for the purposes of debugging
+if _name_ = '_main_':
+    print(createEvent())

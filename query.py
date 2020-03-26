@@ -1,20 +1,28 @@
+''' query.py contains a single function: query()
+    query() is to be called as a module by the script: event.py
+    The query.py can be run by itself for the purpose of debugging
+'''
+
 import datetime
 import re
 import calendar
+import pyinputplus as pyip
 
 # query() takes user-input regarding wedding event details and returns a list called eventList
 def query():
 
-    # creates regex for date and time for preventing date/time input errors
+    # creates regex for date and time for preventing date/time input formatting errors
     dateRegex = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
     timeRegex = re.compile(r'(\d{2}):(\d{2})')
 
     # user queries for event, location, description, wedding date, start and end time, email, and date booked
+    # are defined below
     #
     # query for event name w/ input validation
     while True:
         print('Event:')
         summary = input()
+
         # if loop checks for input, input is required
         if summary == '':
             print('Event summary is required. Please Re-enter.')
@@ -26,6 +34,7 @@ def query():
     while True:
         print('Location:')
         location = input()
+        
         # if loop checks for input, input is required
         if location == '':
             print('Event location is required. Please Re-enter.')
@@ -37,6 +46,7 @@ def query():
     while True:
         print('Description:')
         description = input()
+
         # if loop checks input, input is required
         if description == '':
             print('Event description is required. Please Re-enter.')
@@ -59,8 +69,10 @@ def query():
         else:  
             # convert dateMo tuple to list
             dateList = list(dateMo.groups())
+
             # convert dateList values to integers
             dateList = [int(i) for i in dateList]
+
             if dateList[1] <= 0 or dateList[1] >= 13:
                 print('Incorrect Format, Please Re-enter Wedding Date.')
                 continue
@@ -68,6 +80,7 @@ def query():
                 # create last day of month variable
                 lastDayofMonth = calendar.monthrange(dateList[0], dateList[1])
                 lastDayofMonth = lastDayofMonth[1]
+
                 if dateList[2] <= 0 or dateList[2] > lastDayofMonth:
                     print('Incorrect Format, Please Re-enter Wedding Date.')
                     continue
@@ -100,7 +113,7 @@ def query():
             else:
                 break
 
-        # formats timeStart for input into google calendar api
+    # formats timeStart for input into google calendar api
     timeStart = 'T' + timeStart + ':00-06:00'
     dateTimeStart = weddingDate + timeStart
 
@@ -135,20 +148,14 @@ def query():
                 continue
             else:
                 break
-
+    # formats timeEnd for input into google calendar api
     timeEnd = 'T' + timeEnd + ':00-06:00'
     dateTimeEnd = weddingDate + timeEnd
 
     # query for email address with input validation
-    while True:
-        print('Email Address:')
-        email = input()
-        # if loop checks input, input is required
-        if email == '':
-            print('Email address required. Please Re-enter email address.')
-            continue
-        else:
-            break
+    # used to pyinputplus because I was too lazy to make my own input validation for emails
+    print('Email Address:')
+    email = pyip.inputEmail(prompt='Email Address:')
 
     # query for book date with input validation
     while True:
@@ -165,8 +172,10 @@ def query():
         else:  
             # convert dateMo tuple to list
             dateList = list(dateMo.groups())
+
             # convert dateList values to integers
             dateList = [int(i) for i in dateList]
+
             if dateList[1] <= 0 or dateList[1] >= 13:
                 print('Incorrect Format, Please Re-enter date booked.')
                 continue
@@ -174,6 +183,7 @@ def query():
                 # create last day of month variable
                 lastDayofMonth = calendar.monthrange(dateList[0], dateList[1])
                 lastDayofMonth = lastDayofMonth[1]
+
                 if dateList[2] <= 0 or dateList[2] > lastDayofMonth:
                     print('Incorrect Format, Please Re-enter date booked.')
                     continue
@@ -181,6 +191,10 @@ def query():
                     break
 
 
-    # create list of queries as return value of query()
+    # create list of queries and return eventList 
     eventList = [summary, location, description, dateTimeStart, dateTimeEnd, email, weddingDate, bookDate]
     return eventList
+
+# allows query.py to be run for the purposes of debugging 
+if __name__ == '__main__':
+    print(query())
