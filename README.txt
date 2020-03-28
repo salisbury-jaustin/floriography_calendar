@@ -1,3 +1,7 @@
+# INF360 - Programming in Python
+# Austin Salisbury (James)
+# Midterm Project
+
 Abstract
 	The following program was created to automate adding wedding events to a florists google calendar. You say, "sounds pretty unnecessary, Austin." I agree. However, there is also a set of other important dates leading up to the wedding event itself that must be calculated and added to the calendar. Thus the need to automate the process.
 
