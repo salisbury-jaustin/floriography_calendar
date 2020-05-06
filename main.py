@@ -1,79 +1,93 @@
-''' run main.py to add an event to your google calendar
-    main.py consists of two fucntions
-        1. addEvents(eventDictList, service)
-        2. main()
-    main() is responsible calling credentials.json, which connects my google calendar api credentials,
-        and storing your user access and refresh tokens so that main() has permissions to access and modify
-        your 'primary' google calendar. Once the process is complete, main() calls addEvents() to add events
-        to the calendar
-    main.py makes function calls to the event.py module and event.py makes function calls to the query.py module
-        the reason for creating this hierarchy (query -> event -> main) was twofold: 
-            1. compartmentalize the script into the most basic functional units 
-            2. easier to conceptualize, read, and debug
-'''
+import tkinter as tk
+import submit
+import install
+class MainWindow:
+    ''' MainWindow initializes the master window and defines newWindow() method for creating subsequent toplevel windows'''
+    def __init__(self, master):
+        self.master = master
+        self.frame = tk.Frame(self.master)
+        # creates a Button which opens a new window for booking wedding events
+        self.bookButton = tk.Button(self.frame, text='Book', width=25, command=self.newWindow)
+        self.bookButton.pack()
+        # creates a Button which installs/upgrades dependencies using the class Install
+        self.depButton = tk.Button(self.frame, text='Install/Update', width=25, command=install.Install)
+        self.depButton.pack()
+        self.frame.pack()
+    def newWindow(self):
+        ''' defines behaviour of new windows '''
+        self.newWindow = tk.Toplevel(self.master)
+        self.app = BookWindow(self.newWindow)
 
-from __future__ import print_function
-import event
-import datetime
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
+class BookWindow:
+    ''' BookWindow initializes a toplevel window and handles:
+    user input, input validation, and syncing data to google calendar '''
+    def __init__(self, master):
+        self.master = master
+        self.frame = tk.Frame(self.master) 
+        # creates tk.Entry objects for user query and data collection
+        self.e1 = makeEntry(self.master, 'Event Name: ')
+        self.e1.pack()
+        self.e2 = makeEntry(self.master, 'Event Location: ')
+        self.e2.pack()
+        self.e3 = makeEntry(self.master, 'Date: ')
+        self.e3.pack()
+        self.e4 = makeEntry(self.master, 'Start Time: ')
+        self.e4.pack()
+        self.e5 = makeEntry(self.master, 'End Time: ')
+        self.e5.pack()
+        self.e6 = makeEntry(self.master, 'Description: ')
+        self.e6.pack()
+        self.e7 = makeEntry(self.master, 'Contact Email Address: ')
+        self.e7.pack()
+        self.e8 = makeEntry(self.master, 'Date Booked: ')
+        self.e8.pack()
+        # creates an instance of class Submit to store data when the submit button is clicked
+        self.submitCommand = submit.Submit(self.master)
+        ''' creates a tk.button that handles:
+        1. getting data from tk.entry fields
+        2. storing data in Submit.entryList variable
+        3. displaying user input errors to a tk.text object named self.output'
+        4. calculates additional dates and syncs dates to google calendar '''
+        self.submitButton = tk.Button(self.frame, text='Submit', width=25, command=lambda:[
+            self.submitCommand.getEntries(self.e1, self.e2, self.e3, self.e4, self.e5, self.e6, self.e7, self.e8),
+            self.submitCommand.setEntryList(),
+            self.output.insert(tk.END, '\n'.join(self.submitCommand.getErrorOutput())),
+            self.submitCommand.syncCalendar()])
+        self.submitButton.pack()
+        # creates the tk.Text object self.output for displaying user input errors
+        self.output = tk.Text(self.master, width=90, height=20, wrap=tk.WORD, background='light blue')
+        self.output.pack()
+        # creates a tk.Button for clearing tk.entry fields and sets instance variables of self.submitCommand to NULL 
+        self.clearButton = tk.Button(self.frame, text='Clear', width=25, command=lambda:[
+            self.output.delete(0.0, tk.END),
+            self.e1.delete(0, 'end'),
+            self.e2.delete(0, 'end'),
+            self.e3.delete(0, 'end'),
+            self.e4.delete(0, 'end'),
+            self.e5.delete(0, 'end'),
+            self.e6.delete(0, 'end'),
+            self.e7.delete(0, 'end'),
+            self.e8.delete(0, 'end'),
+            self.submitCommand.clear()])
+        self.clearButton.pack()
+        # quits the bookWindow
+        self.quitButton = tk.Button(self.frame, text='Quit', width=25, command=self.close_windows)
+        self.quitButton.pack()
+        self.frame.pack()
+    def close_windows(self):
+        self.master.destroy()
 
-# If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/calendar']
-
-# addEvents takes eventDictList and create a google calendar event for each index
-def addEvents(eventDictList, service):
-    # both eventDictList and service parameters are local variables within main()
-
-    # service is an object of the build() module imported from googleapiclient.discovery
-    # which stores your authentication information so that the calendar can be modified
-    service = service
-
-    # all the events we want to add to the calendar are stored in eventDictList.
-    # by setting event = service.events().insert().execute, we are creating an event
-    # in a specific calendar using the credentials in the service variable and our event dictionaries
-    # that are stored in eventDictList
-    for i in eventDictList:
-        event = service.events().insert(calendarId='primary', body=i).execute()
-        print('Event created: %s' % (event.get('htmlLink')))
-
-def main():
-    """Shows basic usage of the Google Calendar API.
-    Prints the start and name of the next 10 events on the user's calendar.
-    """
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-
-    # create the service variable
-    service = build('calendar', 'v3', credentials=creds)
-
-    # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-
-    # call function createEvent() from the event module
-    listOfEvents = event.createEvent()
-
-    # add events to calendar
-    addEvents(listOfEvents, service)
-
+# function for making tk.entry object initialization less verbose
+def makeEntry(parent, caption):
+    caption = tk.Label(parent, text=caption).pack()
+    entry = tk.Entry(parent)
+    entry.pack()
+    return entry
+# executes MainWindow loop for GUI
+def main(): 
+    root = tk.Tk()
+    app = MainWindow(root)
+    root.mainloop()
+# calls main() 
 if __name__ == '__main__':
     main()
